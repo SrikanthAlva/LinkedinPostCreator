@@ -5,6 +5,8 @@ const MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
 const MIN_WORDS = 70;
 const MAX_WORDS = 170;
 const MAX_RETRIES = 2;
+/** Per-completion ceiling so a hung request cannot burn the whole CI budget (ms). */
+const OPENAI_REQUEST_MS = Number(process.env.OPENAI_TIMEOUT_MS) || 50_000;
 
 function countWords(text) {
   return (text.trim().match(/\S+/g) || []).length;
@@ -51,6 +53,24 @@ function validate(post) {
   return null;
 }
 
+function postsFromParsed(parsed) {
+  if (!parsed || typeof parsed !== "object") {
+    return { ai_post: "", web3_post: "" };
+  }
+  const aiRaw =
+    parsed.ai_post ??
+    parsed.aiPost ??
+    (parsed.posts && typeof parsed.posts === "object" ? parsed.posts.ai : undefined);
+  const web3Raw =
+    parsed.web3_post ??
+    parsed.web3Post ??
+    (parsed.posts && typeof parsed.posts === "object" ? parsed.posts.web3 : undefined);
+  return {
+    ai_post: sanitizePost(aiRaw ?? ""),
+    web3_post: sanitizePost(web3Raw ?? "")
+  };
+}
+
 async function callOnce(client, userPrompt) {
   const completion = await client.chat.completions.create({
     model: MODEL,
@@ -63,16 +83,13 @@ async function callOnce(client, userPrompt) {
   });
   const content = completion.choices?.[0]?.message?.content || "{}";
   const parsed = JSON.parse(content);
-  return {
-    ai_post: sanitizePost(parsed.ai_post || ""),
-    web3_post: sanitizePost(parsed.web3_post || "")
-  };
+  return postsFromParsed(parsed);
 }
 
 export async function generatePosts({ aiArticles, web3Articles }) {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) throw new Error("OPENAI_API_KEY is not set");
-  const client = new OpenAI({ apiKey });
+  const client = new OpenAI({ apiKey, timeout: OPENAI_REQUEST_MS });
 
   let retryNote = "";
   let lastResult = null;
