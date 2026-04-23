@@ -82,6 +82,13 @@ export default function App() {
           {latest && (
             <>
               <h2 className="section-title">This week</h2>
+              <p className="section-hint">
+                Review each draft on this page, then use{" "}
+                <strong>Open LinkedIn</strong> to finish in LinkedIn’s composer
+                (edit if you like, then post). <strong>Copy</strong> is there if
+                you prefer to paste manually or if the draft is too long to
+                prefill from the link.
+              </p>
               <div className="posts-grid">
                 <PostCard
                   topic="AI"

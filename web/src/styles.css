@@ -113,6 +113,13 @@ button {
   color: var(--text-muted);
 }
 
+.section-hint {
+  margin: -0.75rem 0 1.25rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
 .posts-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -141,6 +148,14 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
+}
+
+.card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
 }
 
 .tag {
@@ -179,6 +194,11 @@ button {
   font-size: 0.8rem;
   font-weight: 500;
   transition: background 0.15s ease, border-color 0.15s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
 }
 
 .copy-btn:hover {
@@ -193,6 +213,28 @@ button {
 .copy-btn--success {
   border-color: color-mix(in srgb, #16a34a 50%, var(--border-strong));
   color: #16a34a;
+}
+
+.copy-btn--linkedin {
+  border-color: color-mix(in srgb, #0a66c2 35%, var(--border-strong));
+  color: #0a66c2;
+}
+
+.copy-btn--linkedin:hover {
+  background: color-mix(in srgb, #0a66c2 8%, transparent);
+  border-color: color-mix(in srgb, #0a66c2 45%, var(--border-strong));
+}
+
+@media (prefers-color-scheme: dark) {
+  .copy-btn--linkedin {
+    color: #70b5f9;
+    border-color: color-mix(in srgb, #70b5f9 35%, var(--border-strong));
+  }
+
+  .copy-btn--linkedin:hover {
+    background: color-mix(in srgb, #70b5f9 10%, transparent);
+    border-color: color-mix(in srgb, #70b5f9 45%, var(--border-strong));
+  }
 }
 
 .post-body {
